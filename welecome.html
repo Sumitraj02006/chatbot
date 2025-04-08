@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            background: linear-gradient(-45deg, #00b4db, #0083b0, #00b4db, #0083b0);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .welcome-box {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .welcome-box:hover {
+            transform: scale(1.03);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        p {
+            font-size: 1.3em;
+            animation: fadeIn 2.5s ease-in-out;
+        }
+
+        .btn {
+            margin-top: 25px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background-color: #ffffff;
+            color: #0083b0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.05);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-box">
+        <h1>Welcome to My Project</h1>
+        <p>Glad to have you here! Let's build something amazing.</p>
+        <button class="btn" onclick="location.href='aibot.html'">Enter Site</button>
+    </div>
+</body>
+</html>
