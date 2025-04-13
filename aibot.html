@@ -2,46 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" type="x-icon" href="871fb4a7-dcdd-4553-ae50-7dd765fc2c93-removebg-preview.png">
+    <link rel="shortcut icon" type="image/x-icon" href="871fb4a7-dcdd-4553-ae50-7dd765fc2c93-removebg-preview.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>www.Nova.com</title>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="aibot.css">
     <link rel="stylesheet" href="bot.css">
-    <!-- Google Fonts Link For Icons -->
+    
+    <!-- Google Fonts for Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
 </head>
 <body>
-    <img src="871fb4a7-dcdd-4553-ae50-7dd765fc2c93-removebg-preview.png" id="logo" alt="logo">
+
+    <!-- Header Section -->
+    <img src="871fb4a7-dcdd-4553-ae50-7dd765fc2c93-removebg-preview.png" id="logo" alt="Nova Virtual Assistant Logo">
     <h1>I'm <span id="name">Nova</span>, Your <span id="va">Virtual Assistant</span></h1>
-    <img src="f4020f114494633.603cbcc781296.gif" alt="voice animation" id="voice">
-    <button id="btn"><img src="mic.svg" alt="mic"><span id="content">Click here to talk to me</span></button>
+    <img src="f4020f114494633.603cbcc781296.gif" alt="Voice animation showing Nova is listening" id="voice">
+    <button id="btn" aria-label="Click to talk to Nova">
+        <img src="mic.svg" alt="Mic Icon">
+        <span id="content">Click here to talk to me</span>
+    </button>
 
     <!-- ✅ CHATBOT CODE STARTS HERE -->
-    <button class="chatbot-toggler">
-      <span class="material-symbols-rounded">mode_comment</span>
-      <span class="material-symbols-outlined">close</span>
+    <button class="chatbot-toggler" aria-label="Toggle chatbot">
+        <span class="material-symbols-rounded">mode_comment</span>
+        <span class="material-symbols-outlined">close</span>
     </button>
+
     <div class="chatbot">
-      <header>
-        <h2>Chatbot</h2>
-        <span class="close-btn material-symbols-outlined">close</span>
-      </header>
-      <ul class="chatbox">
-        <li class="chat incoming">
-          <span class="material-symbols-outlined">smart_toy</span>
-          <p>Hi there 👋<br>How can I help you today?</p>
-        </li>
-      </ul>
-      <div class="chat-input">
-        <textarea placeholder="Enter a message..." spellcheck="false" required></textarea>
-        <span id="send-btn" class="material-symbols-rounded">send</span>
-      </div>
+        <header>
+            <h2>Chatbot</h2>
+            <span class="close-btn material-symbols-outlined">close</span>
+        </header>
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <p>Hi there 👋<br>How can I help you today?</p>
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="Enter a message..." spellcheck="false" required></textarea>
+            <span id="send-btn" class="material-symbols-rounded">send</span>
+        </div>
     </div>
     <!-- ✅ CHATBOT CODE ENDS HERE -->
 
     <!-- Scripts -->
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
     <script src="bot.js" defer></script>
 </body>
 </html>

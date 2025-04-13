@@ -2,7 +2,7 @@ let btn = document.querySelector("#btn");
 let content = document.querySelector("#content");
 let voice = document.querySelector("#voice");
 
-let audio = null;  // Global variable to store the audio object
+let audio = null;
 
 function speak(text) {
     if (text) {
@@ -31,23 +31,46 @@ window.addEventListener('load', () => {
 });
 
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
 if (SpeechRecognition) {
     let recognition = new SpeechRecognition();
-    
+
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
     recognition.onresult = (event) => {
-        let currentIndex = event.resultIndex;
-        let transcript = event.results[currentIndex][0].transcript.toLowerCase(); 
-        console.log(transcript); 
-        content.textContent = transcript; 
+        let transcript = event.results[0][0].transcript.toLowerCase();
+        console.log(transcript);
+        content.textContent = `✅ You said: "${transcript}"`;
+
+        // ✅ Send transcript to backend
+        fetch("http://localhost:5000/api/save-speech", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ content: transcript })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Saved to MySQL:", data);
+        })
+        .catch(error => {
+            console.error("Error sending speech to server:", error);
+        });
+
         takeCommand(transcript);
     };
 
     recognition.onerror = (event) => {
-        console.error('Speech recognition error detected: ' + event.error);
+        console.error('Speech recognition error:', event.error);
+        content.textContent = '❌ Error: ' + event.error;
     };
 
     btn.addEventListener("click", () => {
         recognition.start();
+        content.textContent = "🎤 Listening...";
         btn.style.display = "none";
         voice.style.display = "block";
     });
@@ -59,13 +82,9 @@ function takeCommand(message) {
     btn.style.display = "flex";
     voice.style.display = "none";
 
-    // Activating chatbot when 'hey', 'hello', or 'hi' is said
     if (message.includes("hello") || message.includes("hey") || message.includes("hi")) {
-        setTimeout(() => {
-            speak("Hey! How can I assist you?");
-        }, 100);
-    } 
-    else if (message.includes("who are you")) {
+        setTimeout(() => speak("Hey! How can I assist you?"), 100);
+    } else if (message.includes("who are you")) {
         setTimeout(() => speak("I am a virtual assistant, created by SR."), 100);
     } else if (message.includes("how are you work")) {
         setTimeout(() => speak("just tell me"), 100);
@@ -108,19 +127,19 @@ function takeCommand(message) {
             speak("opening google earth");
             window.open("https://earth.google.com/web", "_blank");
         }, 100);
-    } else if (message.includes("open chartgpt")) {
+    } else if (message.includes("open chatgpt")) {
         setTimeout(() => {
-            speak("opening chartgpt");
+            speak("opening chatgpt");
             window.open("https://chatgpt.com/", "_blank");
         }, 100);
     } else if (message.includes("calculate")) {
         let calculation = message.replace(/calculate|calculate the|find|solve|what is/gi, "").trim();
         if (calculation) {
             try {
-                let result = eval(calculation); // Perform calculation using eval()
+                let result = eval(calculation);
                 speak(`The result is ${result}`);
             } catch (error) {
-                speak("Sorry, I couldn't calculate that. Please try again with a valid expression.");
+                speak("Sorry, I couldn't calculate that.");
             }
         } else {
             speak("Please provide a calculation.");
@@ -133,14 +152,14 @@ function takeCommand(message) {
     } else if (message.includes("play song") || message.includes("play music")) {
         setTimeout(() => {
             speak("Playing your song");
-            audio = new Audio('The Placement Song - Life of Every Engineer.mp3'); // Replace with your song's URL or file path
+            audio = new Audio('The Placement Song - Life of Every Engineer.mp3');
             audio.play();
         }, 100);
     } else if (message.includes("stop song") || message.includes("stop music")) {
         setTimeout(() => {
             if (audio) {
-                audio.pause();  // Pause the audio
-                audio.currentTime = 0;  // Reset to the start of the song
+                audio.pause();
+                audio.currentTime = 0;
                 speak("The song has been stopped.");
             } else {
                 speak("No song is currently playing.");
@@ -159,8 +178,8 @@ function takeCommand(message) {
 }
 
 function getWeather() {
-    let city = "Indian";  // You can replace this with a city of your choice
-    let apiKey = "630c7e1c1985a7ad49536c591daa3419"; // Replace with your OpenWeatherMap API key
+    let city = "Indian";
+    let apiKey = "630c7e1c1985a7ad49536c591daa3419";
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
     fetch(url)

@@ -1,63 +1,121 @@
-const express = require("express");
-const mysql = require("mysql2");
-const bcrypt = require("bcrypt");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+// server.js
+const express = require('express');
+const cors = require('cors');
+const db = require('./db');
 
 const app = express();
-const port = 3000;
+const PORT = 5000;
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json()); // Express ka built-in JSON parser
 
-// MySQL Connection
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "sumit@123",
-    database: "virtual_assistant"
+// Health check route (optional)
+app.get('/', (req, res) => {
+    res.send('Server is running!');
 });
 
-db.connect(err => {
-    if (err) throw err;
-    console.log("MySQL Connected...");
-});
-
-// Register User
-app.post("/register", async (req, res) => {
-    const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-    db.query(sql, [username, email, hashedPassword], (err, result) => {
-        if (err) return res.status(500).send("Error: " + err.message);
-        res.send("User registered successfully");
-    });
-});
-
-// Login User
-app.post("/login", (req, res) => {
-    const { email, password } = req.body;
-
-    const sql = "SELECT * FROM users WHERE email = ?";
-    db.query(sql, [email], async (err, results) => {
-        if (err) return res.status(500).send("Error: " + err.message);
-
-        if (results.length > 0) {
-            const user = results[0];
-            const isMatch = await bcrypt.compare(password, user.password);
-
-            if (isMatch) {
-                res.send("Login successful");
-            } else {
-                res.status(401).send("Invalid password");
-            }
+// ✅ GET route to fetch all tasks
+app.get('/api/tasks', (req, res) => {
+    const sql = 'SELECT * FROM tasks';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('❌ Error fetching tasks:', err);
+            res.status(500).json({ error: 'Database error' });
         } else {
-            res.status(404).send("User not found");
+            res.json(results);
         }
     });
 });
 
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+// ✅ POST route to save speech content
+app.post('/api/save-speech', (req, res) => {
+    const { content } = req.body;
+    if (!content) {
+        return res.status(400).json({ message: "No content provided" });
+    }
+
+    const query = "INSERT INTO speech_records (content) VALUES (?)";
+    db.query(query, [content], (err, result) => {
+        if (err) {
+            console.error('❌ Error saving speech:', err);
+            return res.status(500).json({ message: "Database error" });
+        }
+        res.status(201).json({ message: "Speech saved", id: result.insertId });
+    });
+});
+
+// ✅ POST route for chatbot interaction
+app.post('/chat', (req, res) => {
+    const userMessage = req.body.message?.toLowerCase() || '';
+
+    if (userMessage.includes('task') || userMessage.includes('kaam')) {
+        const sql = 'SELECT * FROM tasks';
+        db.query(sql, (err, results) => {
+            if (err) {
+                res.json({ reply: 'Database error occurred.' });
+            } else {
+                if (results.length === 0) {
+                    res.json({ reply: 'Koi task nahi mila.' });
+                } else {
+                    let reply = 'Yeh rahe aapke tasks:\n';
+                    results.forEach((task, index) => {
+                        reply += `${index + 1}. ${task.task_name} (${task.status})\n`;
+                    });
+                    res.json({ reply });
+                }
+            }
+        });
+    } else {
+        res.json({ reply: 'Main samajh nahi paya. Aap phir se poochein.' });
+    }
+});
+
+// ✅ Start the server
+app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
+
+// ✅ Register user
+app.post('/api/register', (req, res) => {
+    const { full_name, email, username, password, confirm_password } = req.body;
+
+    if (!full_name || !email || !username || !password || !confirm_password) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (password !== confirm_password) {
+        return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    const sql = 'INSERT INTO users (full_name, email, username, password) VALUES (?, ?, ?, ?)';
+    db.query(sql, [full_name, email, username, password], (err, result) => {
+        if (err) {
+            console.error('Error inserting user:', err);
+            return res.status(500).json({ message: 'Database error or Username already taken' });
+        }
+        res.status(201).json({ message: 'User registered successfully' });
+    });
+});
+
+// ✅ Login user
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Please provide username and password' });
+    }
+
+    const sql = 'SELECT * FROM users WHERE username = ? AND password = ?';
+    db.query(sql, [username, password], (err, results) => {
+        if (err) {
+            console.error('Login error:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (results.length === 1) {
+            res.json({ message: 'Login successful', user: results[0] });
+        } else {
+            res.status(401).json({ message: 'Invalid username or password' });
+        }
+    });
 });

@@ -1,76 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-    
-        .login-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-    
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-    
-        button {
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-        }
-    
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    video.bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+  </style>
 </head>
-<body>
-    <input type="email" id="loginEmail" placeholder="Email">
-<input type="password" id="loginPassword" placeholder="Password">
-<button onclick="loginUser()">Login</button>
+<body class="flex flex-col items-center justify-center min-h-screen">
 
-<script>
-async function loginUser() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+  <!-- Background Video with fast loading -->
+  <video autoplay muted loop preload="auto" class="bg-video" poster="fallback.jpg">
+    <source src="YouTube - YouTube (1080p, h264).mp4" type="video/webm">
+    Your browser does not support HTML5 video.
+  </video>
 
-    const response = await fetch("http://localhost:3000/login", {
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white bg-opacity-20 backdrop-blur-md text-white shadow-md z-10">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="text-xl font-bold">Nova Ai Assistant</div>
+      <button id="menu-toggle" class="md:hidden text-2xl focus:outline-none">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="hidden md:flex space-x-6 font-medium">
+        <li><a href="about.html" class="hover:text-pink-300 transition">About Me</a></li>
+        <li><a href="feature.html" class="hover:text-pink-300 transition">Features</a></li>
+        <li><a href="service.html" class="hover:text-pink-300 transition">Service</a></li>
+        <li><a href="contact.html" class="hover:text-pink-300 transition">Contact</a></li>
+      </ul>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
+      <ul class="flex flex-col space-y-2 font-medium">
+        <li><a href="about.html" class="hover:text-pink-300 transition">About Me</a></li>
+        <li><a href="feature.html" class="hover:text-pink-300 transition">Features</a></li>
+        <li><a href="service.html" class="hover:text-pink-300 transition">Service</a></li>
+        <li><a href="contact.html" class="hover:text-pink-300 transition">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Login Form -->
+  <div class="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-lg shadow-lg max-w-md w-full mt-32">
+    <h2 class="text-2xl font-semibold text-center text-white mb-4">Login</h2>
+    <p class="text-center text-white mb-6">Have an account?</p>
+    <form>
+      <div class="mb-4">
+        <input type="text" placeholder="Username" class="w-full p-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:outline-none">
+      </div>
+      <div class="mb-4 relative">
+        <input type="password" placeholder="Password" class="w-full p-3 rounded-lg bg-white bg-opacity-30 text-white placeholder-white focus:outline-none">
+        <i class="fas fa-eye absolute right-3 top-3 text-white"></i>
+      </div>
+      <button type="submit" class="w-full py-3 bg-pink-500 text-white rounded-lg font-semibold hover:bg-pink-600 transition duration-300">SIGN IN</button>
+      <div class="flex items-center justify-between mt-4 text-white">
+        <label class="flex items-center">
+          <input type="checkbox" class="form-checkbox text-pink-500">
+          <span class="ml-2">Remember Me</span>
+        </label>
+        <a href="fp.html" class="text-white">Forgot Password?</a>
+      </div>
+    </form>
+    <div class="text-center text-white mt-6">— Or Sign In With —</div>
+    <div class="flex justify-center mt-4">
+      <button class="bg-white text-gray-800 py-2 px-4 rounded-lg mr-2">Facebook</button>
+      <button class="bg-white text-gray-800 py-2 px-4 rounded-lg">Twitter</button>
+    </div>
+  </div>
+
+  <!-- JS Scripts -->
+  <script>
+    // Login form handling
+    document.querySelector("form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const username = document.querySelector('input[placeholder="Username"]').value;
+      const password = document.querySelector('input[placeholder="Password"]').value;
+      const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      alert(data.message);
+      if (res.ok) {
+        window.location.href = "aibot.html";
+      }
     });
 
-    const message = await response.text();
-    alert(message);
-}
-</script>
+    // Mobile menu toggle
+    document.getElementById("menu-toggle").addEventListener("click", () => {
+      document.getElementById("mobile-menu").classList.toggle("hidden");
+    });
+  </script>
 
 </body>
 </html>
