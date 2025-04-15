@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
@@ -14,7 +13,7 @@ app.get('/', (req, res) => {
     res.send('Server is running!');
 });
 
-// ✅ GET route to fetch all tasks
+// ✅ GET route to fetch all tasks (existing route)
 app.get('/api/tasks', (req, res) => {
     const sql = 'SELECT * FROM tasks';
     db.query(sql, (err, results) => {
@@ -27,7 +26,7 @@ app.get('/api/tasks', (req, res) => {
     });
 });
 
-// ✅ POST route to save speech content
+// ✅ POST route to save speech content (existing route)
 app.post('/api/save-speech', (req, res) => {
     const { content } = req.body;
     if (!content) {
@@ -44,7 +43,7 @@ app.post('/api/save-speech', (req, res) => {
     });
 });
 
-// ✅ POST route for chatbot interaction
+// ✅ POST route for chatbot interaction (existing route)
 app.post('/chat', (req, res) => {
     const userMessage = req.body.message?.toLowerCase() || '';
 
@@ -70,9 +69,24 @@ app.post('/chat', (req, res) => {
     }
 });
 
-// ✅ Start the server
-app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+// ✅ POST route to save contact form data (Name, Email, Message)
+app.post('/api/contact', (req, res) => {
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // SQL query to insert the contact message into the database
+    const query = "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)";
+    db.query(query, [name, email, message], (err, result) => {
+        if (err) {
+            console.error('❌ Error saving contact message:', err);
+            return res.status(500).json({ message: "Database error" });
+        }
+
+        res.status(201).json({ message: "Message saved successfully", id: result.insertId });
+    });
 });
 
 // ✅ Register user
@@ -118,4 +132,9 @@ app.post('/api/login', (req, res) => {
             res.status(401).json({ message: 'Invalid username or password' });
         }
     });
+});
+
+// ✅ Start the server
+app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

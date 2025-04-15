@@ -20,37 +20,44 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen">
 
-  <!-- Background Video with fast loading -->
   <video autoplay muted loop preload="auto" class="bg-video" poster="fallback.jpg">
     <source src="YouTube - YouTube (1080p, h264).mp4" type="video/webm">
     Your browser does not support HTML5 video.
   </video>
 
-  <!-- Navbar -->
-  <nav class="fixed top-0 w-full bg-white bg-opacity-20 backdrop-blur-md text-white shadow-md z-10">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="text-xl font-bold">Nova Ai Assistant</div>
-      <button id="menu-toggle" class="md:hidden text-2xl focus:outline-none">
+  <nav class="fixed top-0 w-full bg-transparent text-white z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <i class="fas fa-robot text-2xl"></i>
+        <span class="text-2xl font-extrabold tracking-wide">Nova AI Assistant</span>
+      </div>
+      <button id="menu-toggle" class="md:hidden text-3xl focus:outline-none">
         <i class="fas fa-bars"></i>
       </button>
-      <ul class="hidden md:flex space-x-6 font-medium">
-        <li><a href="about.html" class="hover:text-pink-300 transition">About Me</a></li>
-        <li><a href="feature.html" class="hover:text-pink-300 transition">Features</a></li>
-        <li><a href="service.html" class="hover:text-pink-300 transition">Service</a></li>
-        <li><a href="contact.html" class="hover:text-pink-300 transition">Contact</a></li>
+      <ul class="hidden md:flex space-x-6 font-medium text-white text-lg">
+        <li><a href="about.html" class="hover:text-yellow-200 transition">About</a></li>
+        <li><a href="feature.html" class="hover:text-yellow-200 transition">Features</a></li>
+        <li><a href="service.html" class="hover:text-yellow-200 transition">Services</a></li>
+        <li><a href="contact.html" class="hover:text-yellow-200 transition">Contact</a></li>
+        <li>
+          <a href="reg.html" class="border border-white px-4 py-1.5 rounded-lg hover:bg-white hover:text-pink-600 transition">
+            Create Account
+          </a>
+        </li>
       </ul>
     </div>
-    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
-      <ul class="flex flex-col space-y-2 font-medium">
-        <li><a href="about.html" class="hover:text-pink-300 transition">About Me</a></li>
-        <li><a href="feature.html" class="hover:text-pink-300 transition">Features</a></li>
-        <li><a href="service.html" class="hover:text-pink-300 transition">Service</a></li>
-        <li><a href="contact.html" class="hover:text-pink-300 transition">Contact</a></li>
+
+    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 bg-black bg-opacity-50 rounded-b-lg">
+      <ul class="flex flex-col space-y-3 text-lg font-medium text-white">
+        <li><a href="about.html" class="hover:text-yellow-200 transition">About</a></li>
+        <li><a href="feature.html" class="hover:text-yellow-200 transition">Features</a></li>
+        <li><a href="service.html" class="hover:text-yellow-200 transition">Services</a></li>
+        <li><a href="contact.html" class="hover:text-yellow-200 transition">Contact</a></li>
+        <li><a href="reg.html" class="hover:text-yellow-200 transition">Create Account</a></li>
       </ul>
     </div>
   </nav>
 
-  <!-- Login Form -->
   <div class="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-lg shadow-lg max-w-md w-full mt-32">
     <h2 class="text-2xl font-semibold text-center text-white mb-4">Login</h2>
     <p class="text-center text-white mb-6">Have an account?</p>
@@ -78,9 +85,7 @@
     </div>
   </div>
 
-  <!-- JS Scripts -->
   <script>
-    // Login form handling
     document.querySelector("form").addEventListener("submit", async function (e) {
       e.preventDefault();
       const username = document.querySelector('input[placeholder="Username"]').value;
@@ -97,7 +102,6 @@
       }
     });
 
-    // Mobile menu toggle
     document.getElementById("menu-toggle").addEventListener("click", () => {
       document.getElementById("mobile-menu").classList.toggle("hidden");
     });

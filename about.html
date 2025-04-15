@@ -3,19 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About Me</title>
+  <title>About Me - AI Chatbot Style</title>
   <link rel="stylesheet" href="about.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="about-container">
     <div class="card">
-      <img src="ChatGPT Image Apr 12, 2025, 09_12_23 PM.png" alt="My Photo" class="profile-pic" />
+      <img src="ChatGPT Image Apr 12, 2025, 09_12_23 PM.png" alt="My Photo" class="profile-pic" onclick="openModal()" />
       <h1>Hello, I'm <span>Your Name</span></h1>
       <p id="intro">
-        I'm a passionate BCA student who loves web development, coding, and designing beautiful things. 
+        I'm a passionate BCA student who loves web development, coding, and designing beautiful things.
       </p>
       <button onclick="showMore()">Know More</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>🤖 AI ChatBot Mode Activated</h2>
+      <p>I aspire to build intelligent, user-friendly AI interfaces like ChatGPT. Exploring JavaScript, Python, and UI/UX design with a deep interest in machine learning and chatbot systems.</p>
     </div>
   </div>
 

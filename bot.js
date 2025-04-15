@@ -4,9 +4,9 @@ const chatbox = document.querySelector(".chatbox");
 const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 
-let userMessage = null; // User message
-const OPENAI_API_KEY = "PASTE-YOUR-OPENAI-KEY";
-const WEATHER_API_KEY = "PASTE-YOUR-OPENWEATHER-API-KEY";
+let userMessage = null;
+const OPENAI_API_KEY = "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"; // Replace with your actual API key
+const WEATHER_API_KEY = "YOUR_WEATHER_API_KEY"; // Replace with your actual API key
 const inputInitHeight = chatInput.scrollHeight;
 
 // Create chat item
@@ -17,7 +17,7 @@ const createChatLi = (message, className) => {
     chatLi.innerHTML = `${icon}<p></p>`;
     chatLi.querySelector("p").innerHTML = message;
     return chatLi;
-}
+};
 
 // Open URLs
 const formatAsLinkAndOpen = (text) => {
@@ -31,7 +31,7 @@ const formatAsLinkAndOpen = (text) => {
         return `Opening website automatically: <a href="${formattedUrl}" target="_blank">${formattedUrl}</a>`;
     }
     return null;
-}
+};
 
 // Get weather info from OpenWeather API
 const getWeather = async (city = "Delhi") => {
@@ -52,13 +52,12 @@ const getWeather = async (city = "Delhi") => {
     } catch (error) {
         return "⚠️ Unable to fetch weather. Please try again.";
     }
-}
+};
 
 const generateResponse = (chatElement) => {
     const messageElement = chatElement.querySelector("p");
     const lowerMsg = userMessage.toLowerCase();
 
-    // Command dictionary
     const commands = {
         "help": "🆘 You can ask me anything! Commands: help, hello, time, date, joke, quote, open google, open youtube, weather in [city]",
         "hello": "👋 Hi there! How can I assist you today?",
@@ -78,7 +77,7 @@ const generateResponse = (chatElement) => {
         "open github": "https://github.com"
     };
 
-    // Weather command check
+    // Weather command
     if (lowerMsg.startsWith("weather in")) {
         const city = userMessage.split("in")[1].trim();
         getWeather(city).then(weatherMsg => {
@@ -88,7 +87,7 @@ const generateResponse = (chatElement) => {
         return;
     }
 
-    // Predefined command check
+    // Predefined commands
     if (commands[lowerMsg]) {
         const cmdResponse = formatAsLinkAndOpen(commands[lowerMsg]) || commands[lowerMsg];
         messageElement.innerHTML = cmdResponse;
@@ -104,33 +103,75 @@ const generateResponse = (chatElement) => {
         return;
     }
 
-    // OpenAI fallback response
-    const API_URL = "https://api.openai.com/v1/chat/completions";
-    const requestOptions = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: userMessage }]
-        })
-    };
+    // Wikipedia summary for any question
+    const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`;
 
-    fetch(API_URL, requestOptions)
+    fetch(wikiUrl)
         .then(res => res.json())
         .then(data => {
-            messageElement.textContent = data.choices[0].message.content.trim();
+            if (data.extract_short) {
+                messageElement.innerHTML = `📚 <b>${data.title}</b><br>${data.extract_short}<br><a href="${data.content_urls.desktop.page}" target="_blank">Read more</a>`;
+            } else if (data.extract) {
+                const shortenedExtract = data.extract.split('. ').slice(0, 2).join('. ') + '.';
+                messageElement.innerHTML = `📚 <b>${data.title}</b><br>${shortenedExtract}<br><a href="${data.content_urls.desktop.page}" target="_blank">Read more</a>`;
+            } else {
+                // If no Wikipedia summary, use OpenAI
+                const API_URL = "https://api.openai.com/v1/chat/completions";
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [{ role: "user", content: userMessage }]
+                    })
+                };
+
+                fetch(API_URL, requestOptions)
+                    .then(res => res.json())
+                    .then(openaiData => {
+                        messageElement.textContent = openaiData.choices[0].message.content.trim();
+                    })
+                    .catch(() => {
+                        messageElement.classList.add("error");
+                        messageElement.textContent = "⚠️ Oops! Something went wrong.";
+                    })
+                    .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
+                return;
+            }
         })
         .catch(() => {
-            messageElement.classList.add("error");
-            messageElement.textContent = "⚠️ Oops! Something went wrong.";
+            // If Wikipedia fetch fails, use OpenAI
+            const API_URL = "https://api.openai.com/v1/chat/completions";
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [{ role: "user", content: userMessage }]
+                })
+            };
+
+            fetch(API_URL, requestOptions)
+                .then(res => res.json())
+                .then(openaiData => {
+                    messageElement.textContent = openaiData.choices[0].message.content.trim();
+                })
+                .catch(() => {
+                    messageElement.classList.add("error");
+                    messageElement.textContent = "⚠️ Oops! Something went wrong.";
+                })
+                .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
         })
         .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
-}
+};
 
-// Chat send handler
+// Chat handler
 const handleChat = () => {
     userMessage = chatInput.value.trim();
     if (!userMessage) return;
@@ -147,9 +188,9 @@ const handleChat = () => {
         chatbox.scrollTo(0, chatbox.scrollHeight);
         generateResponse(incomingChatLi);
     }, 600);
-}
+};
 
-// Auto-grow input
+// Input resize
 chatInput.addEventListener("input", () => {
     chatInput.style.height = `${inputInitHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
@@ -163,8 +204,7 @@ chatInput.addEventListener("keydown", (e) => {
     }
 });
 
-// Event listeners
+// Toggle handlers
 sendChatBtn.addEventListener("click", handleChat);
 closeBtn.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
 chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));
-

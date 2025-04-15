@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Server Page</title>
+  <title>AI Chatbot Services</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     * {
@@ -14,7 +14,7 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: #fff;
       height: 100vh;
       display: flex;
@@ -24,31 +24,36 @@
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      text-align: center;
-      max-width: 500px;
-      animation: fadeIn 2s ease;
-    }
+  background: rgba(0, 0, 0, 0.5);
+  padding: 40px 30px;
+  border-radius: 20px;
+  text-align: center;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 1.5s ease;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       margin-bottom: 20px;
+      color: #00f7ff;
+      text-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff;
+      animation: pulseGlow 2.5s infinite;
     }
 
     p {
-      font-size: 1rem;
-      margin-bottom: 30px;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #d1d1f9;
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(-50px);
+        transform: translateY(-30px);
       }
       to {
         opacity: 1;
@@ -56,26 +61,47 @@
       }
     }
 
-    .glow {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #8f94fb;
-      animation: glowPulse 2s infinite;
-    }
-
-    @keyframes glowPulse {
+    @keyframes pulseGlow {
       0%, 100% {
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #8f94fb;
+        text-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff;
       }
       50% {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #8f94fb;
+        text-shadow: 0 0 20px #00f7ff, 0 0 40px #00f7ff;
       }
+    }
+
+    .service-list {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .service-item {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      border-left: 5px solid #00f7ff;
+      transition: 0.3s;
+    }
+
+    .service-item:hover {
+      background-color: rgba(0, 247, 255, 0.1);
+      transform: translateX(10px);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="glow">service</h1>
-    <p>This is a secure and smooth interface to monitor your server status and manage operations efficiently.</p>
-  </div>
+    <h1>Services</h1>
+    <p>AI-powered tools and features to help you manage your server and chatbot efficiently and securely.</p>
 
+    <div class="service-list">
+      <div class="service-item">🤖 Real-time Chatbot Monitoring</div>
+      <div class="service-item">📊 Server Usage Analytics</div>
+      <div class="service-item">🔐 Secure Authentication</div>
+      <div class="service-item">📡 API Integration Dashboard</div>
+      <div class="service-item">🛠️ Maintenance & Auto-Updates</div>
+    </div>
+  </div>
 </body>
 </html>
