@@ -4,10 +4,10 @@ const chatbox = document.querySelector(".chatbox");
 const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 
-let userMessage = null;
-const OPENAI_API_KEY = ""; // Replace with your actual API key
-const WEATHER_API_KEY = "YOUR_WEATHER_API_KEY"; // Replace with your actual API key
-const inputInitHeight = chatInput.scrollHeight;
+// let userMessage = null;
+// const OPENAI_API_KEY = ""; // Replace with your actual API key
+// const WEATHER_API_KEY = "YOUR_WEATHER_API_KEY"; // Replace with your actual API key
+// const inputInitHeight = chatInput.scrollHeight;
 
 // Create chat item
 const createChatLi = (message, className) => {
