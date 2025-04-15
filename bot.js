@@ -5,7 +5,7 @@ const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 
 let userMessage = null;
-const OPENAI_API_KEY = "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"; // Replace with your actual API key
+const OPENAI_API_KEY = ""; // Replace with your actual API key
 const WEATHER_API_KEY = "YOUR_WEATHER_API_KEY"; // Replace with your actual API key
 const inputInitHeight = chatInput.scrollHeight;
 
