@@ -4,12 +4,9 @@ const chatbox = document.querySelector(".chatbox");
 const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 
-// let userMessage = null;
-// const OPENAI_API_KEY = ""; // Replace with your actual API key
-// const WEATHER_API_KEY = "YOUR_WEATHER_API_KEY"; // Replace with your actual API key
-// const inputInitHeight = chatInput.scrollHeight;
+let userMessage = null;
+const inputInitHeight = chatInput.scrollHeight;
 
-// Create chat item
 const createChatLi = (message, className) => {
     const chatLi = document.createElement("li");
     chatLi.classList.add("chat", className);
@@ -19,7 +16,6 @@ const createChatLi = (message, className) => {
     return chatLi;
 };
 
-// Open URLs
 const formatAsLinkAndOpen = (text) => {
     const urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-z]{2,}(\/\S*)?$/;
     if (urlPattern.test(text)) {
@@ -28,30 +24,9 @@ const formatAsLinkAndOpen = (text) => {
             formattedUrl = "https://" + formattedUrl;
         }
         window.open(formattedUrl, '_blank');
-        return `Opening website automatically: <a href="${formattedUrl}" target="_blank">${formattedUrl}</a>`;
+        return `Opening website: <a href="${formattedUrl}" target="_blank">${formattedUrl}</a>`;
     }
     return null;
-};
-
-// Get weather info from OpenWeather API
-const getWeather = async (city = "Delhi") => {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}&units=metric`;
-
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.cod === 200) {
-            const temp = data.main.temp;
-            const desc = data.weather[0].description;
-            const cityName = data.name;
-            return `🌤️ Weather in ${cityName}: ${temp}°C, ${desc}`;
-        } else {
-            return `❌ City not found: "${city}"`;
-        }
-    } catch (error) {
-        return "⚠️ Unable to fetch weather. Please try again.";
-    }
 };
 
 const generateResponse = (chatElement) => {
@@ -59,35 +34,24 @@ const generateResponse = (chatElement) => {
     const lowerMsg = userMessage.toLowerCase();
 
     const commands = {
-        "help": "🆘 You can ask me anything! Commands: help, hello, time, date, joke, quote, open google, open youtube, weather in [city]",
-        "hello": "👋 Hi there! How can I assist you today?",
-        "hi": "Hello! 👋",
-        "about": "🤖 I'm a chatbot built using OpenAI & JavaScript!",
-        "creator": "👨‍💻 I was created by an awesome developer!",
-        "your name": "I'm ChatBuddy, your personal assistant 🤖",
-        "how are you": "I'm just code, but I'm doing great! 😄",
-        "thanks": "You're welcome! 😊",
-        "bye": "Goodbye! Have a nice day! 👋",
-        "time": `🕒 Current time is: ${new Date().toLocaleTimeString()}`,
-        "date": `📅 Today's date is: ${new Date().toLocaleDateString()}`,
-        "joke": "😂 Why do programmers prefer dark mode? Because the light attracts bugs!",
-        "quote": "💡 “Code is like humor. When you have to explain it, it’s bad.” – Cory House",
+        "help": "🆘 Ask anything! Commands: help, hello, time, date, joke, quote, open google, open youtube, open github",
+        "hello": " Hi there! How can I assist you today?",
+        "hi": "Hello! ",
+        "about": " I'm a chatbot built using JavaScript!",
+        "creator": "‍ I was created by a developer.",
+        "your name": "I'm ChatBuddy ",
+        "how are you": "I'm great! Just code and coffee ☕",
+        "thanks": "You're welcome! ",
+        "bye": "Goodbye! ",
+        "time": ` Current time: ${new Date().toLocaleTimeString()}`,
+        "date": ` Date: ${new Date().toLocaleDateString()}`,
+        "joke": " Why do programmers prefer dark mode? Because light attracts bugs!",
+        "quote": " “Code is like humor. When you have to explain it, it’s bad.” – Cory House",
         "open google": "https://www.google.com",
         "open youtube": "https://www.youtube.com",
         "open github": "https://github.com"
     };
 
-    // Weather command
-    if (lowerMsg.startsWith("weather in")) {
-        const city = userMessage.split("in")[1].trim();
-        getWeather(city).then(weatherMsg => {
-            messageElement.innerHTML = weatherMsg;
-            chatbox.scrollTo(0, chatbox.scrollHeight);
-        });
-        return;
-    }
-
-    // Predefined commands
     if (commands[lowerMsg]) {
         const cmdResponse = formatAsLinkAndOpen(commands[lowerMsg]) || commands[lowerMsg];
         messageElement.innerHTML = cmdResponse;
@@ -95,7 +59,6 @@ const generateResponse = (chatElement) => {
         return;
     }
 
-    // Direct link detection
     const siteLink = formatAsLinkAndOpen(userMessage);
     if (siteLink) {
         messageElement.innerHTML = siteLink;
@@ -103,75 +66,41 @@ const generateResponse = (chatElement) => {
         return;
     }
 
-    // Wikipedia summary for any question
-    const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage)}`;
+    if (lowerMsg.startsWith("what is")) {
+        const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(userMessage.substring(8))}`;
 
-    fetch(wikiUrl)
-        .then(res => res.json())
-        .then(data => {
-            if (data.extract_short) {
-                messageElement.innerHTML = `📚 <b>${data.title}</b><br>${data.extract_short}<br><a href="${data.content_urls.desktop.page}" target="_blank">Read more</a>`;
-            } else if (data.extract) {
-                const shortenedExtract = data.extract.split('. ').slice(0, 2).join('. ') + '.';
-                messageElement.innerHTML = `📚 <b>${data.title}</b><br>${shortenedExtract}<br><a href="${data.content_urls.desktop.page}" target="_blank">Read more</a>`;
-            } else {
-                // If no Wikipedia summary, use OpenAI
-                const API_URL = "https://api.openai.com/v1/chat/completions";
-                const requestOptions = {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${OPENAI_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        messages: [{ role: "user", content: userMessage }]
-                    })
-                };
+        fetch(wikiUrl)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.extract) {
+                    const shortExtract = data.extract.split('. ').slice(0, 2).join('. ') + '.';
+                    messageElement.innerHTML = `
+                         <b>${data.title}</b><br>
+                        ${shortExtract}<br>
+                        <a href="${data.content_urls.desktop.page}" target="_blank">Read more</a>
+                    `;
+                } else {
+                    messageElement.textContent = " Sorry, I couldn't find info on that topic.";
+                }
+            })
+            .catch(error => {
+                console.error("Wikipedia API error:", error);
+                messageElement.classList.add("error");
+                messageElement.textContent = "⚠️ Failed to fetch info. Check console for details.";
+            })
+            .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
+        return;
+    }
 
-                fetch(API_URL, requestOptions)
-                    .then(res => res.json())
-                    .then(openaiData => {
-                        messageElement.textContent = openaiData.choices[0].message.content.trim();
-                    })
-                    .catch(() => {
-                        messageElement.classList.add("error");
-                        messageElement.textContent = "⚠️ Oops! Something went wrong.";
-                    })
-                    .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
-                return;
-            }
-        })
-        .catch(() => {
-            // If Wikipedia fetch fails, use OpenAI
-            const API_URL = "https://api.openai.com/v1/chat/completions";
-            const requestOptions = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${OPENAI_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
-                    messages: [{ role: "user", content: userMessage }]
-                })
-            };
-
-            fetch(API_URL, requestOptions)
-                .then(res => res.json())
-                .then(openaiData => {
-                    messageElement.textContent = openaiData.choices[0].message.content.trim();
-                })
-                .catch(() => {
-                    messageElement.classList.add("error");
-                    messageElement.textContent = "⚠️ Oops! Something went wrong.";
-                })
-                .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
-        })
-        .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
+    messageElement.textContent = " Please be more specific.";
+    chatbox.scrollTo(0, chatbox.scrollHeight);
 };
 
-// Chat handler
 const handleChat = () => {
     userMessage = chatInput.value.trim();
     if (!userMessage) return;
@@ -190,13 +119,11 @@ const handleChat = () => {
     }, 600);
 };
 
-// Input resize
 chatInput.addEventListener("input", () => {
     chatInput.style.height = `${inputInitHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
 });
 
-// Send on Enter
 chatInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
         e.preventDefault();
@@ -204,7 +131,6 @@ chatInput.addEventListener("keydown", (e) => {
     }
 });
 
-// Toggle handlers
 sendChatBtn.addEventListener("click", handleChat);
 closeBtn.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
 chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));

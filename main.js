@@ -93,45 +93,29 @@ function takeCommand(message) {
     } else if (message.includes("weather")) {
         getWeather();
     } else if (message.includes("open youtube")) {
-        setTimeout(() => {
-            speak("opening youtube");
-            window.open("https://www.youtube.com/", "_blank");
-        }, 100);
+        speak("opening youtube");
+        window.open("https://www.youtube.com/", "_blank");
     } else if (message.includes("open google")) {
-        setTimeout(() => {
-            speak("opening google");
-            window.open("https://www.google.co.in/", "_blank");
-        }, 100);
+        speak("opening google");
+        window.open("https://www.google.co.in/", "_blank");
     } else if (message.includes("open instagram")) {
-        setTimeout(() => {
-            speak("opening instagram");
-            window.open("https://www.instagram.com/accounts/login/", "_blank");
-        }, 100);
+        speak("opening instagram");
+        window.open("https://www.instagram.com/accounts/login/", "_blank");
     } else if (message.includes("open facebook")) {
-        setTimeout(() => {
-            speak("opening facebook");
-            window.open("https://www.facebook.com/", "_blank");
-        }, 100);
+        speak("opening facebook");
+        window.open("https://www.facebook.com/", "_blank");
     } else if (message.includes("open snapchat")) {
-        setTimeout(() => {
-            speak("opening snapchat");
-            window.open("https://www.snapchat.com/", "_blank");
-        }, 100);
+        speak("opening snapchat");
+        window.open("https://www.snapchat.com/", "_blank");
     } else if (message.includes("open map")) {
-        setTimeout(() => {
-            speak("opening google map");
-            window.open("https://maps.google.com/", "_blank");
-        }, 100);
+        speak("opening google map");
+        window.open("https://maps.google.com/", "_blank");
     } else if (message.includes("open earth")) {
-        setTimeout(() => {
-            speak("opening google earth");
-            window.open("https://earth.google.com/web", "_blank");
-        }, 100);
+        speak("opening google earth");
+        window.open("https://earth.google.com/web", "_blank");
     } else if (message.includes("open chatgpt")) {
-        setTimeout(() => {
-            speak("opening chatgpt");
-            window.open("https://chatgpt.com/", "_blank");
-        }, 100);
+        speak("opening chatgpt");
+        window.open("https://chatgpt.com/", "_blank");
     } else if (message.includes("calculate")) {
         let calculation = message.replace(/calculate|calculate the|find|solve|what is/gi, "").trim();
         if (calculation) {
@@ -150,21 +134,19 @@ function takeCommand(message) {
         let currentDay = daysOfWeek[day.getDay()];
         speak(`Today is ${currentDay}`);
     } else if (message.includes("play song") || message.includes("play music")) {
-        setTimeout(() => {
-            speak("Playing your song");
-            audio = new Audio('The Placement Song - Life of Every Engineer.mp3');
-            audio.play();
-        }, 100);
+        speak("Playing your song");
+        audio = new Audio('The Placement Song - Life of Every Engineer.mp3');
+        audio.play();
     } else if (message.includes("stop song") || message.includes("stop music")) {
-        setTimeout(() => {
-            if (audio) {
-                audio.pause();
-                audio.currentTime = 0;
-                speak("The song has been stopped.");
-            } else {
-                speak("No song is currently playing.");
-            }
-        }, 100);
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+            speak("The song has been stopped.");
+        } else {
+            speak("No song is currently playing.");
+        }
+    } else if (message.includes("who is") || message.includes("tell me about") || message.includes("what is")) {
+        getWikipediaSummary(message);
     } else {
         let searchTerm = message.replace(/naruto|naroto/gi, "").trim();
         if (searchTerm) {
@@ -175,6 +157,29 @@ function takeCommand(message) {
             speak("I'm not sure what you're looking for.");
         }
     }
+}
+
+function getWikipediaSummary(query) {
+    const searchTerm = query.replace(/(who is|tell me about|what is)/gi, "").trim();
+    if (!searchTerm) {
+        speak("Please tell me what you want to search on Wikipedia.");
+        return;
+    }
+
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.extract) {
+                let shortSummary = data.extract.split('. ').slice(0, 2).join('. ') + '.';
+                speak(shortSummary);
+            } else {
+                speak("Sorry, I couldn't find anything on Wikipedia.");
+            }
+        })
+        .catch(error => {
+            console.error("Wikipedia fetch error:", error);
+            speak("There was an error fetching information from Wikipedia.");
+        });
 }
 
 function getWeather() {
